@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lyrics Searching Website</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="shortcut icon" href="../images/js-icon.png" type="image/x-icon">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            *:no-button {
+                transition: all 0.3s ease-in-out; 
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            button.mainButton.outline {
+                background-color: transparent;
+                border: 1px solid #000;
+                color: #000;
+                font-size: 1.0rem;
+                padding: 0.2rem 0.5rem;
+                border-radius: 0.25rem;
+                transition: all 0.2s ease-in-out;
+            }
+            button.mainButton.outline:hover {
+                background-color: #000;
+                color: #fff;
+            }
+            button.mainButton.outline:focus {
+                outline: none;
+            }
+            button.mainButton {
+                background-color: #000;
+                color: #fff;
+                font-size: 1.0rem;
+                padding: 0.2rem 0.5rem;
+                border-radius: 0.25rem;
+                transition: all 0.2s ease-in-out;
+            }
+            button.mainButton:hover {
+                background-color: #fff;
+                color: #000;
+            }
+            .bottomLeft {
+                position: fixed;
+                bottom: 80px;
+                left: 25px;
+                background-color: #000;
+            }
+            @media (min-width: 760px) {
+                .position-md-fixed {
+                    position: fixed !important;
+                }
+            }
+            input:focus {
+                outline: 0;
+            }
+            input.question {
+                font-size: 40px;
+                font-weight: 300;
+                border-radius: 2px;
+                margin: auto auto;
+                border: none;
+                width: 80%;
+                background: rgba(0, 0, 0, 0);
+                transition: padding-top 0.2s ease, margin-top 0.2s ease;
+                overflow-x: hidden;
+            }
+            input.question + label {
+                display: block;
+                position: relative;
+                white-space: nowrap;
+                padding: 0;
+                margin: 0;
+                width: 10%;
+                border-top: 1px solid #343a40;
+                -webkit-transition: width 0.4s ease;
+                transition: width 0.4s ease;
+                height: 0px;
+            }
+            input.question:focus + label {
+                width: 80%;
+            }
+            input.question:focus,
+            input.question:valid {
+                padding-top: 35px;
+            }
+            input.question:focus + label > span,
+            input.question:valid + label > span {
+                top: -100px;
+                font-size: 22px;
+                color: #333;
+            }
+            input.question + label > span {
+                font-weight: 300;
+                margin: 0;
+                position: absolute;
+                color: #8F8F8F;
+                font-size: 36px;
+                top: -66px;
+                left: 0px;
+                z-index: -1;
+                -webkit-transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+                transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+            }
+            @-webkit-keyframes appear {
+                100% {
+                    opacity: 1;
+                }
+            }
+            @keyframes appear {
+                100% {
+                    opacity: 1;
+                }
+            }
+            @media (max-width: 568px) {
+                input.question {
+                    font-size: 20px;
+                }
+                input.question + label > span {
+                    font-size: 30px;
+                    top: -50px;
+                }
+                input.question:focus + label > span,
+                input.question:valid + label > span {
+                    top: -100px;
+                    font-size: 22px;
+                    color: #333;
+                }
+            }
+        </style>
+    </head>
+    <body style="overflow-x: hidden;">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-center p-2">
+            <a class="navbar-brand m-auto">
+                <img src="logo.svg" class="d-inline-block align-top" alt="">
+            </a>
+        </nav>
+        <div class="container position-relative" id="searchBar">
+            <div class="row mt-5">
+                <div class="col-12">
+                    <input type="text" name="song" class="question" id="song" required autocomplete="off" oninput="getSuggested()" />
+                    <label for="song"><span>What are you looking for?</span></label>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row d-flex justify-content-center mt-3">
+                <h3 class="text-center" id="result">
+                </h3>
+                <div class="row d-flex justify-content-center mt-3" id="suggestions"></div>
+            </div>
+            <audio id="audio"></audio>
+            <div id="lyrics" class="d-none">
+                <div class="row text-center">
+                    <div class="col-md-6 d-flex justify-content-center">
+                        <div class="col-md-4 position-md-fixed mt-md--5">
+                            <h3 id="song-name" class="p-1"></h3>
+                            <h4 id="artist-name" class="text-muted"></h4>
+                            <img id="album-cover" class="img-thumbnail w-50" src="">
+                            <p class="lead font-weight-bold" id="album-name"></p>
+                            <button class="mainButton outline m-2" id="preview-lyrics">
+                                <i class="fas fa-play"></i>
+                                Preview
+                            </button>
+                            <button class="mainButton outline d-none" onclick="getSuggested()" id="goBackButton">
+                                <i class="fas fa-search"></i>
+                                Go back to search
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center my-2">
+                        <h5>
+                            Lyrics
+                        </h5>
+                        <hr>
+                        <p id="lyrics-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function getSuggested() {
+                var song = document.getElementById("song").value;
+                var back = document.getElementById("goBackButton");
+                var suggestionsArea = document.getElementById("suggestions");
+                if (suggestionsArea.classList.contains("d-none")) {
+                    suggestionsArea.classList.remove("d-none");
+                    suggestionsArea.classList.add("d-flex");
+                    document.getElementById("searchBar").classList.remove("d-none");
+                    document.getElementById("result").classList.remove("d-none");
+                    document.getElementById("lyrics").classList.add("d-none");
+                }
+                if (!(song.length > 0)) {
+                    suggestionsArea.innerHTML = "";
+                    document.getElementById("result").innerHTML = "Please enter something";
+                    return;
+                }
+                back.classList.add("d-none");
+                var url = "https://api.lyrics.ovh/suggest/" + song;
+                var request = new XMLHttpRequest();
+                request.open("GET", url);
+                request.send();
+                request.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        suggestionsArea.innerHTML = "";    
+                        document.getElementById("result").innerHTML = "Following are the suggestions for <b>" + song + "</b>";                 
+                        var data = JSON.parse(this.responseText);
+                        if (data.data.length == 0) {
+                            document.getElementById("result").innerHTML = "No suggestions found for <b>" + song + "</b>";
+                            return;
+                        }
+                        for (var i = 0; i < data.data.length; i++) {
+                            makeSuggestionCard(data.data[i].title, data.data[i].album.title, data.data[i].artist.name, data.data[i].album.cover_big, data.data[i].preview);
+                        }
+                    }
+                    else if (this.readyState == 4 && this.status == 404) {
+                        suggestionsArea.innerHTML = "";
+                        document.getElementById("result").innerHTML = "No suggestions found for <b>" + song + "</b>";
+                    }
+                }
+                window.scrollTo(0, 0);
+            }
+            function getLyrics(artist, song, album, cover, preview) {
+                var back = document.getElementById("goBackButton");
+                var suggestionsArea = document.getElementById("suggestions");
+                var lyricsArea = document.getElementById("lyrics");
+                var url = "https://api.lyrics.ovh/v1/" + artist + "/" + song;
+                var request = new XMLHttpRequest();
+                request.open("GET", url);
+                request.send();
+                request.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        try {
+                            var data = JSON.parse(this.responseText);
+                            var div = document.createElement("div");
+                            div.className = "card";
+                            div.innerHTML = "<div class='card-body'><h5 class='card-title'>" + song + "</h5><p class='card-text'>" + artist + "</p><p class='card-text'>" + data.lyrics + "</p></div>";
+                            suggestionsArea.classList.remove("d-flex");
+                            suggestionsArea.classList.add("d-none");
+                            lyricsArea.classList.remove("d-none");
+                            document.getElementById("song-name").innerHTML = song;
+                            document.getElementById("artist-name").innerHTML = artist;
+                            document.getElementById("album-cover").src = cover;
+                            document.getElementById("audio").src = preview;
+                            document.getElementById("searchBar").classList.add("d-none");
+                            document.getElementById("result").classList.add("d-none");
+                            back.classList.remove("d-none");
+                            var songLyrics = data.lyrics;
+                            var lyrics = songLyrics.split("\n");
+                            var lyricsText = "";
+                            for (var i = 0; i < lyrics.length; i++) {
+                                if(lyrics[i].includes("Paroles"))
+                                    continue;
+                                lyricsText += lyrics[i] + "<br>";
+                            }
+                            console.log(lyricsText);
+                            document.getElementById("lyrics-text").innerHTML = lyricsText;
+                            document.getElementById("album-cover").innerHTML = "";
+                            var button1 = document.getElementById("preview-lyrics");
+                            button1.addEventListener("click", function() {
+                                playSong(preview, button1.id);
+                            });
+                            document.getElementById("album-name").innerHTML = album;
+                        } catch (e) {
+                            Swal.fire ({
+                                title: 'Oops...',
+                                text: 'No lyrics found!',
+                                icon: 'error'
+                            });
+                            console.log(e);
+                        }
+                    }
+                    else if (this.readyState == 4 && this.status == 404) {
+                        Swal.fire ({
+                            title: 'Oops..',
+                            text: 'No lyrics found! We are sorry for the inconvenience.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+                window.scrollTo(0, 0);
+            }
+            function makeSuggestionCard(song, album, artist, albumCover, previewURL) 
+            {
+                var suggestionsArea = document.getElementById("suggestions");
+                var mainDiv = document.createElement("div");
+                mainDiv.className = "card m-3 m-md-1"
+                mainDiv.style = "max-width: 540px;";
+                var rowDiv = document.createElement("div");
+                rowDiv.className = "row no-gutters align-items-center";
+                var colDiv = document.createElement("div");
+                colDiv.className = "col-md-4";
+                var img = document.createElement("img");
+                img.className = "card-img";
+                img.src = albumCover;
+                img.alt = album;
+                colDiv.appendChild(img);
+                rowDiv.appendChild(colDiv);
+                var colDiv2 = document.createElement("div");
+                colDiv2.className = "col-md-8";
+                var cardDiv = document.createElement("div");
+                cardDiv.className = "card-body";
+                var h5 = document.createElement("h5");
+                h5.className = "card-title";
+                h5.innerHTML = song;
+                var div = document.createElement("div");
+                div.className = "row";
+                var p = document.createElement("p");
+                p.className = "card-text";
+                p.innerHTML = "<strong>Artist:</strong> " + artist;
+                var col6 = document.createElement("div");
+                col6.className = "col-md-6";
+                col6.appendChild(p);
+                div.appendChild(col6);
+                var p2 = document.createElement("p");
+                p2.className = "card-text";
+                p2.innerHTML = "<strong>Album:</strong> " + album;
+                var col6 = document.createElement("div");
+                col6.className = "col-md-6";
+                col6.appendChild(p2);
+                div.appendChild(col6);
+                var button1 = document.createElement("button");
+                button1.className = "mainButton outline my-1";
+                button1.innerHTML = "<i class='fas fa-play'></i> Preview";
+                button1.id = "preview" + Math.floor(Math.random() * 100);
+                button1.onclick = function() {
+                    playSong(previewURL, button1.id);
+                }
+                var button2 = document.createElement("button");
+                button2.className = "mainButton outline my-1";
+                button2.innerHTML = "<i class='fas fa-music'></i> Get Lyrics";
+                button2.onclick = function() {
+                    getLyrics(artist, song, album, albumCover, previewURL);
+                }
+                col6 = document.createElement("div");
+                col6.className = "col-md-6";
+                col6.appendChild(button1);
+                div.appendChild(col6);
+                col6 = document.createElement("div");
+                col6.className = "col-md-6";
+                col6.appendChild(button2);
+                div.appendChild(col6);
+                cardDiv.appendChild(h5);
+                cardDiv.appendChild(p);
+                cardDiv.appendChild(p2);
+                cardDiv.appendChild(div);
+                colDiv2.appendChild(cardDiv);
+                rowDiv.appendChild(colDiv2);
+                mainDiv.appendChild(rowDiv);
+                suggestionsArea.appendChild(mainDiv);
+            }
+            function playSong(previewURL, buttonID) {
+                var audio = document.getElementById("audio");
+                var caller = document.getElementById(buttonID);
+                audio.src = previewURL;
+                audio.play();
+                caller.innerHTML = "<i class='fas fa-pause'></i> Pause";
+                caller.onclick = function() {
+                    audio.pause();
+                    caller.innerHTML = "<i class='fas fa-play'></i> Preview";
+                    caller.onclick = function() {
+                        playSong(previewURL, buttonID);
+                    }
+                }
+                audio.onended = function() {
+                    caller.innerHTML = "<i class='fas fa-play'></i> Preview";
+                    caller.onclick = function() {
+                        playSong(previewURL, buttonID);
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
