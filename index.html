@@ -59,6 +59,9 @@
                 .position-md-fixed {
                     position: fixed !important;
                 }
+                .mt-md--2 {
+                    margin-top: -1rem !important;
+                }
             }
             input:focus {
                 outline: 0;
@@ -131,10 +134,16 @@
                 }
                 input.question:focus + label > span,
                 input.question:valid + label > span {
-                    top: -100px;
+                    top: -80px;
                     font-size: 22px;
                     color: #333;
                 }
+                audio {
+                    width: 100%;
+                }
+            }
+            audio::-webkit-media-controls-panel {
+                background-color: #888;
             }
         </style>
     </head>
@@ -158,19 +167,18 @@
                 </h3>
                 <div class="row d-flex justify-content-center mt-3" id="suggestions"></div>
             </div>
-            <audio id="audio"></audio>
             <div id="lyrics" class="d-none">
                 <div class="row text-center">
                     <div class="col-md-6 d-flex justify-content-center">
-                        <div class="col-md-4 position-md-fixed mt-md--5">
+                        <div class="col-md-4 position-md-fixed mt-md--2">
                             <h3 id="song-name" class="p-1"></h3>
                             <h4 id="artist-name" class="text-muted"></h4>
                             <img id="album-cover" class="img-thumbnail w-50" src="">
                             <p class="lead font-weight-bold" id="album-name"></p>
-                            <button class="mainButton outline m-2" id="preview-lyrics">
-                                <i class="fas fa-play"></i>
-                                Preview
-                            </button>
+                            <p class="lead">
+                                Preview: 
+                            </p>
+                            <audio id="audio" controls></audio>
                             <button class="mainButton outline d-none" onclick="getSuggested()" id="goBackButton">
                                 <i class="fas fa-search"></i>
                                 Go back to search
@@ -263,12 +271,10 @@
                                 lyricsText += lyrics[i] + "<br>";
                             }
                             console.log(lyricsText);
+                            var audio = document.getElementById("audio");
+                            audio.src = preview;
                             document.getElementById("lyrics-text").innerHTML = lyricsText;
-                            document.getElementById("album-cover").innerHTML = "";
-                            var button1 = document.getElementById("preview-lyrics");
-                            button1.addEventListener("click", function() {
-                                playSong(preview, button1.id);
-                            });
+                            document.getElementById("album-cover").innerHTML = ""
                             document.getElementById("album-name").innerHTML = album;
                         } catch (e) {
                             Swal.fire ({
@@ -329,13 +335,10 @@
                 col6.className = "col-md-6";
                 col6.appendChild(p2);
                 div.appendChild(col6);
-                var button1 = document.createElement("button");
-                button1.className = "mainButton outline my-1";
-                button1.innerHTML = "<i class='fas fa-play'></i> Preview";
-                button1.id = "preview" + Math.floor(Math.random() * 100);
-                button1.onclick = function() {
-                    playSong(previewURL, button1.id);
-                }
+                var audioElement = document.createElement("audio");
+                audioElement.id = "audio" + Math.floor(Math.random() * 100);
+                audioElement.src = previewURL;
+                audioElement.controls = true;
                 var button2 = document.createElement("button");
                 button2.className = "mainButton outline my-1";
                 button2.innerHTML = "<i class='fas fa-music'></i> Get Lyrics";
@@ -343,11 +346,12 @@
                     getLyrics(artist, song, album, albumCover, previewURL);
                 }
                 col6 = document.createElement("div");
-                col6.className = "col-md-6";
-                col6.appendChild(button1);
+                col6.className = "col-md-12";
+                col6.innerHTML = "<p><strong>Preview:</strong></p>";
+                col6.appendChild(audioElement);
                 div.appendChild(col6);
                 col6 = document.createElement("div");
-                col6.className = "col-md-6";
+                col6.className = "col-md-6 d-flex justify-content-center";
                 col6.appendChild(button2);
                 div.appendChild(col6);
                 cardDiv.appendChild(h5);
@@ -358,26 +362,6 @@
                 rowDiv.appendChild(colDiv2);
                 mainDiv.appendChild(rowDiv);
                 suggestionsArea.appendChild(mainDiv);
-            }
-            function playSong(previewURL, buttonID) {
-                var audio = document.getElementById("audio");
-                var caller = document.getElementById(buttonID);
-                audio.src = previewURL;
-                audio.play();
-                caller.innerHTML = "<i class='fas fa-pause'></i> Pause";
-                caller.onclick = function() {
-                    audio.pause();
-                    caller.innerHTML = "<i class='fas fa-play'></i> Preview";
-                    caller.onclick = function() {
-                        playSong(previewURL, buttonID);
-                    }
-                }
-                audio.onended = function() {
-                    caller.innerHTML = "<i class='fas fa-play'></i> Preview";
-                    caller.onclick = function() {
-                        playSong(previewURL, buttonID);
-                    }
-                }
             }
         </script>
     </body>
