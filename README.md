@@ -2,3 +2,4 @@
 <h3 align="center">This lyric finder uses Vanilla JS to get you the lyrics of your favorite song!</h3>
 
  - Open the page and search for any song you like.
+ - Go through the displayed suggestions and select the one you want.
