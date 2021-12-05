@@ -9,3 +9,5 @@
    
  - Enjoy the lyrics! <br>
    <img src="https://user-images.githubusercontent.com/66639966/144365506-fdee06ab-49ff-49d8-8fbc-8d90bedf6df6.png"/>
+   
+#### <b>Note: </b>The preview option does not work due to the protocol of the song request. Please download the files and run them for full experience.
