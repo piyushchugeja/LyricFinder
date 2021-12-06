@@ -232,11 +232,11 @@
         <script>
             function getSuggested() {
                 var song = document.getElementById("song").value;
-                if (document.getElementById("suggestions").innerHTML == "") {
-                    document.getElementById("suggestions").innerHTML = "<div class='spinner-border text-dark' role='status'><span class='sr-only'>Loading...</span></div>";
-                }
                 var back = document.getElementById("goBackButton");
                 var suggestionsArea = document.getElementById("suggestions");
+                if (suggestionsArea.innerHTML == "") {
+                    suggestionsArea.innerHTML = "<div class='spinner-border text-dark' role='status'><span class='sr-only'>Loading...</span></div>";
+                }
                 if (suggestionsArea.classList.contains("d-none")) {
                     suggestionsArea.classList.remove("d-none");
                     suggestionsArea.classList.add("d-flex");
