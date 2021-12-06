@@ -201,8 +201,7 @@
         </div>
         <div class="container">
             <div class="row d-flex justify-content-center mt-5">
-                <h3 class="text-center" id="result">
-                </h3>
+                <h3 class="text-center" id="result"></h3>
                 <div class="row d-flex justify-content-center mt-3" id="suggestions"></div>
             </div>
             <div id="lyrics" class="d-none">
@@ -370,10 +369,10 @@
                 col6.appendChild(p2);
                 div.appendChild(col6);
                 var e = document.createElement("div");
-                e.className = "alert alert-dark py-1 my-1";
-                e.innerHTML = "<strong>Explicit:</strong> " + isExplicit;
+                e.className = "alert alert-dark py-1 my-1 text-center";
+                e.innerHTML = "<strong>Explicit:</strong> " + isExplicit.toString().toUpperCase();
                 var button = document.createElement("button");
-                button.className = "mainButton outline my-1";
+                button.className = "mainButton outline my-1 btn-block";
                 button.innerHTML = "<i class='fas fa-music'></i> Get Lyrics";
                 button.onclick = function() {
                     getLyrics(artist, song, album, albumCover);
