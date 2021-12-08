@@ -93,11 +93,6 @@
                     opacity: 1;
                 }
             }
-            @media (max-width: 568px) {
-                .slide-up, .slide-up + label {
-                    font-size: 0.9rem !important;
-                }
-            }
             /* Scroll bar CSS */
             ::-webkit-scrollbar {
                 width: 10px;
@@ -189,6 +184,11 @@
             }
             .slide-up:focus + label:after, .slide-up:active + label:after {
                 transform: translateY(100%);
+            }
+            @media (max-width: 568px) {
+                .slide-up, .slide-up + label {
+                    font-size: 0.9rem;
+                }
             }
             span {
                 color: #fff;
