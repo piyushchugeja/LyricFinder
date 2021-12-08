@@ -29,10 +29,6 @@
                 background-color: transparent;
                 border: 1px solid #000;
                 color: #000;
-                font-size: 1.0rem;
-                padding: 0.2rem 0.5rem;
-                border-radius: 0.25rem;
-                transition: all 0.2s ease-in-out;
             }
             button.mainButton.outline:hover {
                 background-color: #000;
@@ -119,17 +115,18 @@
                 position: fixed;
                 bottom: 20px;
                 right: 20px;
-                background-color: #444;
+                background-color: #343a40;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
                 border: none;
+                outline: none;
+                color: #fff;
+                font-size: 1.5rem;
+                cursor: pointer;
+                transition: all 0.2s ease-in-out;
                 display: none;
                 opacity: 0.5;
-                color: #fff;
-                font-size: 2.0rem;
-                padding: 0.2rem 0.5rem;
-                border-radius: 0.25rem;
-                transition: all 0.2s ease-in-out;
-                outline: none;
-                z-index: 7;
             }
             button.backToTop:hover {
                 opacity: 1;
@@ -180,27 +177,100 @@
                 background-color: #495158;
                 cursor: auto;
             }
+            .slide-up {
+                display: inline-block;
+                width: 600px;
+                padding: 10px 0 10px 15px;
+                font-weight: 400;
+                color: #343a40;
+                background: #efefef;
+                border: 0;
+                border-radius: 3px;
+                outline: 0;
+                text-indent: 250px;
+                transition: all 0.3s ease-in-out;
+                margin: 0 auto;
+                font-size: 1.2rem;
+            }
+            .slide-up::-webkit-input-placeholder {
+                color: #efefef;
+                text-indent: 0;
+                font-weight: 300;
+            }
+            .slide-up + label {
+                display: inline-block;
+                position: absolute;
+                transform: translateX(0);
+                top: 0;
+                left: 0;
+                padding: 10px 15px;
+                text-shadow: 0 1px 0 #343a40;
+                transition: all 0.3s ease-in-out;
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+                overflow: hidden;
+                font-size: 1.2rem;
+            }
+            .slide-up + label:before, .slide-up + label:after {
+                content: "";
+                position: absolute;
+                right: 0;
+                left: 0;
+                z-index: -1;
+                transition: all 0.3s ease-in-out;
+            }
+            .slide-up + label:before {
+                top: 6px;
+                left: 5px;
+                right: 5px;
+                bottom: 6px;
+                background: #343a40;
+            }
+            .slide-up + label:after {
+                top: 0;
+                bottom: 0;
+                background: #343a40;
+            }
+            .slide-up:focus, .slide-up:active {
+                color: #343a40;
+                text-indent: 0;
+                background: #efefef;
+            }
+            .slide-up:focus::-webkit-input-placeholder, .slide-up:active::-webkit-input-placeholder {
+                color: #aaa;
+            }
+            .slide-up:focus + label, .slide-up:active + label {
+                transform: translateY(-100%);
+            }
+            .slide-up:focus + label:before, .slide-up:active + label:before {
+                border-radius: 5px;
+            }
+            .slide-up:focus + label:after, .slide-up:active + label:after {
+                transform: translateY(100%);
+            }
+            span {
+                color: #fff;
+            }
         </style>
     </head>
-    <body style="overflow-x: hidden;">
-        <button class="backToTop" id="goToTop">
-
-            <i class="fas fa-chevron-circle-up"></i>
+    <body style="overflow-x: hidden;" onload="checkCookies()">
+        <button class="backToTop" id="goToTop" onclick="window.scrollTo(0, 0)" title="Go back to top">
+            <i class="fas fa-chevron-up"></i>
         </button>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-center p-2">
             <a class="navbar-brand m-auto">
                 <img src="logo.svg" class="d-inline-block align-top" alt="">
             </a>
         </nav>
-        <div class="container position-relative" id="searchBar">
-            <div class="row mt-5">
+        <div class="container position-relative" id="searchBar" title="Main Search Bar">
+            <div class="row mt-5 mx-auto">
                 <div class="col-12">
-                    <input type="text" name="song" class="question" id="song" required autocomplete="off" oninput="getSuggested()" />
+                    <input type="text" name="song" class="slide-up w-100" id="song" placeholder="Taylor Swift" required autocomplete="off" oninput="getSuggested()" />
                     <label for="song"><span>What are you looking for?</span></label>
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container" title="Lyrics Container">
             <div class="row d-flex justify-content-center mt-5">
                 <h3 class="text-center" id="result"></h3>
                 <div class="row d-flex justify-content-center mt-3" id="suggestions"></div>
@@ -273,6 +343,7 @@
                     }
                 }
                 window.scrollTo(0, 0);
+                setCookies(song);
             }
             function getLyrics(artist, song, album, cover) {
                 var back = document.getElementById("goBackButton");
@@ -403,9 +474,26 @@
                     document.getElementById("goToTop").style.display = "none";
                 }
             });
-            document.getElementById("goToTop").addEventListener('click', function() {
-                window.scrollTo(0, 0);
-            });
+            function checkCookies() {
+                var cookie = document.cookie;
+                if (cookie.length > 0) {
+                    Swal.fire ({
+                        title: 'Welcome back!',
+                        text: 'Here are the results as per your last serarch.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    cookies = cookie.split(";");
+                    document.getElementById("song").value = cookies[0].split("=")[1];
+                    getSuggested();
+                }
+            }
+            function setCookies(song) {
+                var date = new Date();
+                date.setTime(date.getTime() + (365 * 24 * 60 * 60 * 1000));
+                var expires = "expires=" + date.toUTCString();
+                document.cookie = "song=" + song + ";" + expires + ";path=/";
+            }
         </script>
     </body>
 </html>
