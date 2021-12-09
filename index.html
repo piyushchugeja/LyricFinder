@@ -297,9 +297,6 @@
                     if (this.readyState == 4 && this.status == 200) {
                         try {
                             var data = JSON.parse(this.responseText);
-                            var div = document.createElement("div");
-                            div.className = "card";
-                            div.innerHTML = "<div class='card-body'><h5 class='card-title'>" + song + "</h5><p class='card-text'>" + artist + "</p><p class='card-text'>" + data.lyrics + "</p></div>";
                             suggestionsArea.classList.remove("d-flex");
                             suggestionsArea.classList.add("d-none");
                             lyricsArea.classList.remove("d-none");
