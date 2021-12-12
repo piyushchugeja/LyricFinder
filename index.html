@@ -217,6 +217,10 @@
                                 <i class="fas fa-search"></i>
                                 Go back to search
                             </button>
+                            <button class="mainButton outline" onclick="printMe()" id="printButton">
+                                <i class="fas fa-print"></i>
+                                Print Lyrics
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-6 text-center my-5 my-md-2">
@@ -282,6 +286,7 @@
                 var url = "https://api.lyrics.ovh/v1/" + artist + "/" + song;
                 var request = new XMLHttpRequest();
                 request.open("GET", url);
+                console.log(request.readyState);
                 request.send();
                 request.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
@@ -435,7 +440,7 @@
                 if (cookie.length > 0) {
                     Swal.fire ({
                         title: 'Welcome back!',
-                        text: 'Here are the results as per your last search.',
+                        text: 'Here are the results as per your last serarch.',
                         icon: 'success',
                         confirmButtonText: 'OK'
                     });
@@ -449,6 +454,9 @@
                 date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
                 var expires = "expires=" + date.toUTCString();
                 document.cookie = "song=" + song + ";" + expires + ";path=/";
+            }
+            function printMe() {
+                window.print();
             }
         </script>
     </body>
