@@ -79,11 +79,11 @@
                 transition: all 0.2s ease-in-out;
                 display: none;
                 opacity: 0.5;
-                z-index: 7;
             }
             button.backToTop:hover {
                 opacity: 1;
             }
+
             /* Scroll bar CSS */
             ::-webkit-scrollbar {
                 width: 10px;
@@ -117,6 +117,7 @@
                 outline: 0;
                 text-indent: 250px;
                 transition: all 0.3s ease-in-out;
+                margin: 0 auto;
                 font-size: 1.2rem;
             }
             .slide-up::-webkit-input-placeholder {
@@ -137,7 +138,6 @@
                 border-bottom-left-radius: 3px;
                 overflow: hidden;
                 font-size: 1.2rem;
-                margin-left: 1.2rem;
             }
             .slide-up + label:before, .slide-up + label:after {
                 content: "";
@@ -178,10 +178,10 @@
             }
             @media (max-width: 568px) {
                 .slide-up, .slide-up + label {
-                    font-size: 1rem;
+                    font-size: 0.9rem;
                 }
                 .slide-up {
-                    text-indent: 190px;
+                    text-indent: 160px;
                 }
                 .slide-up + label {
                     margin-left: 1rem;
@@ -223,9 +223,13 @@
                             <h4 id="artist-name" class="text-muted"></h4>
                             <img id="album-cover" class="img-thumbnail w-50" src="">
                             <p class="lead font-weight-bold" id="album-name"></p>
-                            <button class="mainButton outline d-none" onclick="getSuggested()" id="goBackButton">
+                            <button class="mainButton outline" onclick="getSuggested()" id="goBackButton">
                                 <i class="fas fa-search"></i>
                                 Go back to search
+                            </button>
+                            <button class="mainButton outline" onclick="printMe()" id="printButton">
+                                <i class="fas fa-print"></i>
+                                Print Lyrics
                             </button>
                         </div>
                     </div>
@@ -242,7 +246,6 @@
         <script>
             function getSuggested() {
                 var song = document.getElementById("song").value;
-                var back = document.getElementById("goBackButton");
                 var suggestionsArea = document.getElementById("suggestions");
                 if (suggestionsArea.innerHTML == "") {
                     suggestionsArea.innerHTML = "<div class='spinner-border text-dark' role='status'><span class='sr-only'>Loading...</span></div>";
@@ -259,7 +262,6 @@
                     document.getElementById("result").innerHTML = "Please enter something";
                     return;
                 }
-                back.classList.add("d-none");
                 var url = "https://api.lyrics.ovh/suggest/" + song;
                 var request = new XMLHttpRequest();
                 request.open("GET", url);
@@ -286,7 +288,6 @@
                 setCookies(song);
             }
             function getLyrics(artist, song, album, cover) {
-                var back = document.getElementById("goBackButton");
                 var suggestionsArea = document.getElementById("suggestions");
                 var lyricsArea = document.getElementById("lyrics");
                 var url = "https://api.lyrics.ovh/v1/" + artist + "/" + song;
@@ -305,7 +306,6 @@
                             document.getElementById("album-cover").src = cover;
                             document.getElementById("searchBar").classList.add("d-none");
                             document.getElementById("result").classList.add("d-none");
-                            back.classList.remove("d-none");
                             var songLyrics = data.lyrics;
                             var lyrics = songLyrics.split("\n");
                             var lyricsText = "";
@@ -416,7 +416,7 @@
                 if (cookie.length > 0) {
                     Swal.fire ({
                         title: 'Welcome back!',
-                        text: 'Here are the results as per your last search.',
+                        text: 'Here are the results as per your last serarch.',
                         icon: 'success',
                         confirmButtonText: 'OK'
                     });
@@ -430,6 +430,9 @@
                 date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
                 var expires = "expires=" + date.toUTCString();
                 document.cookie = "song=" + song + ";" + expires + ";path=/";
+            }
+            function printMe() {
+                window.print();
             }
         </script>
     </body>
