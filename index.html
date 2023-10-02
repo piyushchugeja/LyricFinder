@@ -1,440 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Lyrics Searching Website</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
-        <meta name="theme-color" content="#000000">
-        <meta name="description" content="Lyric Finder is a web application that allows you to search for lyrics of any song you want.">
-        <meta name="keywords" content="lyrics, lyric, lyric finder, apis, lyrics.ovh, microproject, lyric search, songs, song lyrics">
-        <meta name="author" content="Piyush Chugeja">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            *:no-button {
-                transition: all 0.3s ease-in-out; 
-            }
-            html {
-                scroll-behavior: smooth;
-            }
-            button.mainButton.outline {
-                background-color: transparent;
-                border: 1px solid #000;
-                color: #000;
-            }
-            button.mainButton.outline:hover {
-                background-color: #000;
-                color: #fff;
-            }
-            button.mainButton.outline:focus {
-                outline: none;
-            }
-            button.mainButton {
-                background-color: #000;
-                color: #fff;
-                font-size: 1.0rem;
-                padding: 0.2rem 0.5rem;
-                border-radius: 0.25rem;
-                transition: all 0.2s ease-in-out;
-            }
-            button.mainButton:hover {
-                background-color: #fff;
-                color: #000;
-            }
-            .bottomLeft {
-                position: fixed;
-                bottom: 80px;
-                left: 25px;
-                background-color: #000;
-            }
-            @media (min-width: 760px) {
-                .position-md-fixed {
-                    position: fixed !important;
-                }
-            }
-            input:focus {
-                outline: 0;
-            }
-            button.backToTop {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background-color: #343a40;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                border: none;
-                outline: none;
-                color: #fff;
-                font-size: 1.5rem;
-                cursor: pointer;
-                transition: all 0.2s ease-in-out;
-                display: none;
-                opacity: 0.5;
-                z-index: 7;
-            }
-            button.backToTop:hover {
-                opacity: 1;
-            }
 
-            /* Scroll bar CSS */
-            ::-webkit-scrollbar {
-                width: 10px;
-                cursor: auto;
-            }
-            ::-webkit-scrollbar-track { 
-                border-radius: 5px;
-                cursor: auto;
-                box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-            }
-            ::-webkit-scrollbar-thumb {
-                background-color: #343a40;
-                border: 1px solid transparent; 
-                border-radius: 5px;
-                cursor: auto;
-                transition: all 0.5s ease-in-out;
-            }
-            ::-webkit-scrollbar-thumb:hover {
-                background-color: #495158;
-                cursor: auto;
-            }
-            .slide-up {
-                display: inline-block;
-                width: 600px;
-                padding: 10px 0 10px 15px;
-                font-weight: 400;
-                color: #343a40;
-                background: #efefef;
-                border: 0;
-                border-radius: 3px;
-                outline: 0;
-                text-indent: 250px;
-                transition: all 0.3s ease-in-out;
-                margin: 0 auto;
-                font-size: 1.2rem;
-            }
-            .slide-up::-webkit-input-placeholder {
-                color: #efefef;
-                text-indent: 0;
-                font-weight: 300;
-            }
-            .slide-up + label {
-                display: inline-block;
-                position: absolute;
-                transform: translateX(0);
-                top: 0;
-                left: 0;
-                padding: 10px 15px;
-                text-shadow: 0 1px 0 #343a40;
-                transition: all 0.3s ease-in-out;
-                border-top-left-radius: 3px;
-                border-bottom-left-radius: 3px;
-                overflow: hidden;
-                font-size: 1.2rem;
-            }
-            .slide-up + label:before, .slide-up + label:after {
-                content: "";
-                position: absolute;
-                right: 0;
-                left: 0;
-                z-index: -1;
-                transition: all 0.3s ease-in-out;
-            }
-            .slide-up + label:before {
-                top: 6px;
-                left: 5px;
-                right: 5px;
-                bottom: 6px;
-                background: #343a40;
-            }
-            .slide-up + label:after {
-                top: 0;
-                bottom: 0;
-                background: #343a40;
-            }
-            .slide-up:focus, .slide-up:active {
-                color: #343a40;
-                text-indent: 0;
-                background: #efefef;
-            }
-            .slide-up:focus::-webkit-input-placeholder, .slide-up:active::-webkit-input-placeholder {
-                color: #aaa;
-            }
-            .slide-up:focus + label, .slide-up:active + label {
-                transform: translateY(-100%);
-            }
-            .slide-up:focus + label:before, .slide-up:active + label:before {
-                border-radius: 5px;
-            }
-            .slide-up:focus + label:after, .slide-up:active + label:after {
-                transform: translateY(100%);
-            }
-            @media (max-width: 568px) {
-                .slide-up, .slide-up + label {
-                    font-size: 0.9rem;
-                }
-                .slide-up {
-                    text-indent: 160px;
-                }
-                .slide-up + label {
-                    margin-left: 1rem;
-                    padding: 10px 8px;
-                }
-            }
-            span {
-                color: #fff;
-            }
-        </style>
-    </head>
-    <body style="overflow-x: hidden;" onload="checkCookies()">
-        <button class="backToTop" id="goToTop" onclick="window.scrollTo(0, 0)" title="Go back to top">
-            <i class="fas fa-chevron-up"></i>
-        </button>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-center p-2">
-            <a class="navbar-brand m-auto">
-                <img src="logo.svg" class="d-inline-block align-top" alt="">
-            </a>
-        </nav>
-        <div class="container position-relative" id="searchBar" title="Main Search Bar">
-            <div class="row mt-5 mx-auto">
-                <div class="col-12">
-                    <input type="text" name="song" class="slide-up w-100" id="song" placeholder="Taylor Swift" required autocomplete="off" oninput="getSuggested()" />
-                    <label for="song"><span>What are you looking for?</span></label>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics Searching Website</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="theme-color" content="#000000">
+    <meta name="description"
+        content="Lyric Finder is a web application that allows you to search for lyrics of any song you want.">
+    <meta name="keywords"
+        content="lyrics, lyric, lyric finder, apis, open api hub, microproject, lyric search, songs, song lyrics">
+    <meta name="author" content="Piyush Chugeja">
+</head>
+
+<body style="overflow-x: hidden;" onload="checkCookies()">
+    <button class="backToTop" id="goToTop" onclick="window.scrollTo(0, 0)" title="Go back to top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-center p-2">
+        <a class="navbar-brand m-auto">
+            <img src="images/logo.svg" class="d-inline-block align-top" alt="Lyric finder logo">
+        </a>
+    </nav>
+    <div class="container position-relative" id="searchBar" title="Main Search Bar">
+        <div class="row mt-5 mx-auto">
+            <div class="col-12">
+                <input type="text" name="song" class="slide-up w-100" id="song" placeholder="Taylor Swift" required
+                    autocomplete="off" oninput="getSuggested()" />
+                <label for="song"><span>What are you looking for?</span></label>
+            </div>
+        </div>
+    </div>
+    <div class="container" title="Lyrics Container">
+        <div class="row d-flex justify-content-center mt-5">
+            <h3 class="text-center" id="result"></h3>
+            <div class="row d-flex justify-content-center mt-3" id="suggestions"></div>
+        </div>
+        <div id="lyrics" class="d-none">
+            <div class="row text-center">
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="col-md-4 position-md-fixed mt-md--5">
+                        <h3 id="song-name" class="p-1"></h3>
+                        <h4 id="artist-name" class="text-muted"></h4>
+                        <img id="album-cover" class="img-thumbnail w-50" src="">
+                        <p class="lead font-weight-bold" id="album-name"></p>
+                        <button class="mainButton outline" onclick="getSuggested()" id="goBackButton">
+                            <i class="fas fa-search"></i>
+                            Go back to search
+                        </button>
+                        <button class="mainButton outline" onclick="printMe()" id="printButton">
+                            <i class="fas fa-print"></i>
+                            Print Lyrics
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center my-5 my-md-2">
+                    <h5>
+                        Lyrics
+                    </h5>
+                    <hr>
+                    <p id="lyrics-text"></p>
                 </div>
             </div>
         </div>
-        <div class="container" title="Lyrics Container">
-            <div class="row d-flex justify-content-center mt-5">
-                <h3 class="text-center" id="result"></h3>
-                <div class="row d-flex justify-content-center mt-3" id="suggestions"></div>
-            </div>
-            <div id="lyrics" class="d-none">
-                <div class="row text-center">
-                    <div class="col-md-6 d-flex justify-content-center">
-                        <div class="col-md-4 position-md-fixed mt-md--5">
-                            <h3 id="song-name" class="p-1"></h3>
-                            <h4 id="artist-name" class="text-muted"></h4>
-                            <img id="album-cover" class="img-thumbnail w-50" src="">
-                            <p class="lead font-weight-bold" id="album-name"></p>
-                            <button class="mainButton outline" onclick="getSuggested()" id="goBackButton">
-                                <i class="fas fa-search"></i>
-                                Go back to search
-                            </button>
-                            <button class="mainButton outline" onclick="printMe()" id="printButton">
-                                <i class="fas fa-print"></i>
-                                Print Lyrics
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-6 text-center my-5 my-md-2">
-                        <h5>
-                            Lyrics
-                        </h5>
-                        <hr>
-                        <p id="lyrics-text"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script>
-            function getSuggested() {
-                var song = document.getElementById("song").value;
-                var suggestionsArea = document.getElementById("suggestions");
-                if (suggestionsArea.innerHTML == "") {
-                    suggestionsArea.innerHTML = "<div class='spinner-border text-dark' role='status'><span class='sr-only'>Loading...</span></div>";
-                }
-                if (suggestionsArea.classList.contains("d-none")) {
-                    suggestionsArea.classList.remove("d-none");
-                    suggestionsArea.classList.add("d-flex");
-                    document.getElementById("searchBar").classList.remove("d-none");
-                    document.getElementById("result").classList.remove("d-none");
-                    document.getElementById("lyrics").classList.add("d-none");
-                }
-                if (!(song.length > 0)) {
+    </div>
+    <script>
+        function getSuggested() {
+            var song = document.getElementById("song").value;
+            var suggestionsArea = document.getElementById("suggestions");
+            if (suggestionsArea.innerHTML == "") {
+                suggestionsArea.innerHTML = "<div class='spinner-border text-dark' role='status'><span class='sr-only'>Loading...</span></div>";
+            }
+            if (suggestionsArea.classList.contains("d-none")) {
+                suggestionsArea.classList.remove("d-none");
+                suggestionsArea.classList.add("d-flex");
+                document.getElementById("searchBar").classList.remove("d-none");
+                document.getElementById("result").classList.remove("d-none");
+                document.getElementById("lyrics").classList.add("d-none");
+            }
+            if (!(song.length > 0)) {
+                suggestionsArea.innerHTML = "";
+                document.getElementById("result").innerHTML = "Please enter something";
+                return;
+            }
+            var url = "https://api.lyrics.ovh/suggest/" + song;
+            var request = new XMLHttpRequest();
+            request.open("GET", url);
+            request.send();
+            request.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
                     suggestionsArea.innerHTML = "";
-                    document.getElementById("result").innerHTML = "Please enter something";
-                    return;
-                }
-                var url = "https://api.lyrics.ovh/suggest/" + song;
-                var request = new XMLHttpRequest();
-                request.open("GET", url);
-                request.send();
-                request.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        suggestionsArea.innerHTML = "";    
-                        document.getElementById("result").innerHTML = "Following are the suggestions for <b>" + song + "</b>";                 
-                        var data = JSON.parse(this.responseText);
-                        if (data.data.length == 0) {
-                            document.getElementById("result").innerHTML = "No suggestions found for <b>" + song + "</b>";
-                            return;
-                        }
-                        for (var i = 0; i < data.data.length; i++) {
-                            makeSuggestionCard(data.data[i].title, data.data[i].album.title, data.data[i].artist.name, data.data[i].album.cover_big, data.data[i].explicit_lyrics);
-                        }
-                    }
-                    else if (this.readyState == 4 && this.status == 404) {
-                        suggestionsArea.innerHTML = "";
+                    document.getElementById("result").innerHTML = "Following are the suggestions for <b>" + song + "</b>";
+                    var data = JSON.parse(this.responseText);
+                    if (data.data.length == 0) {
                         document.getElementById("result").innerHTML = "No suggestions found for <b>" + song + "</b>";
+                        return;
+                    }
+                    for (var i = 0; i < data.data.length; i++) {
+                        makeSuggestionCard(data.data[i].title, data.data[i].album.title, data.data[i].artist.name, data.data[i].album.cover_big, data.data[i].explicit_lyrics);
                     }
                 }
-                window.scrollTo(0, 0);
-                setCookies(song);
+                else if (this.readyState == 4 && this.status == 404) {
+                    suggestionsArea.innerHTML = "";
+                    document.getElementById("result").innerHTML = "No suggestions found for <b>" + song + "</b>";
+                }
             }
-            function getLyrics(artist, song, album, cover) {
-                var suggestionsArea = document.getElementById("suggestions");
-                var lyricsArea = document.getElementById("lyrics");
-                var url = "https://api.lyrics.ovh/v1/" + artist + "/" + song;
-                var request = new XMLHttpRequest();
-                request.open("GET", url);
-                request.send();
-                request.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        try {
-                            var data = JSON.parse(this.responseText);
-                            suggestionsArea.classList.remove("d-flex");
-                            suggestionsArea.classList.add("d-none");
-                            lyricsArea.classList.remove("d-none");
-                            document.getElementById("song-name").innerHTML = song;
-                            document.getElementById("artist-name").innerHTML = artist;
-                            document.getElementById("album-cover").src = cover;
-                            document.getElementById("searchBar").classList.add("d-none");
-                            document.getElementById("result").classList.add("d-none");
-                            var songLyrics = data.lyrics;
-                            var lyrics = songLyrics.split("\n");
-                            var lyricsText = "";
-                            for (var i = 0; i < lyrics.length; i++) {
-                                if(lyrics[i].includes("Paroles"))
-                                    continue;
-                                lyricsText += lyrics[i] + "<br>";
-                            }
-                            console.log(lyricsText);
-                            document.getElementById("lyrics-text").innerHTML = lyricsText;
-                            document.getElementById("album-cover").innerHTML = "";
-                            document.getElementById("album-name").innerHTML = album;
-                        } catch (e) {
-                            Swal.fire ({
-                                title: 'Oops...',
-                                text: 'No lyrics found!',
-                                icon: 'error'
-                            });
-                            console.log(e);
+            window.scrollTo(0, 0);
+            setCookies(song);
+        }
+        function getLyrics(artist, song, album, cover) {
+            var suggestionsArea = document.getElementById("suggestions");
+            var lyricsArea = document.getElementById("lyrics");
+            var url = "https://api.lyrics.ovh/v1/" + artist + "/" + song;
+            var request = new XMLHttpRequest();
+            request.open("GET", url);
+            request.send();
+            request.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    try {
+                        var data = JSON.parse(this.responseText);
+                        suggestionsArea.classList.remove("d-flex");
+                        suggestionsArea.classList.add("d-none");
+                        lyricsArea.classList.remove("d-none");
+                        document.getElementById("song-name").innerHTML = song;
+                        document.getElementById("artist-name").innerHTML = artist;
+                        document.getElementById("album-cover").src = cover;
+                        document.getElementById("searchBar").classList.add("d-none");
+                        document.getElementById("result").classList.add("d-none");
+                        var songLyrics = data.lyrics;
+                        var lyrics = songLyrics.split("\n");
+                        var lyricsText = "";
+                        for (var i = 0; i < lyrics.length; i++) {
+                            if (lyrics[i].includes("Paroles"))
+                                continue;
+                            lyricsText += lyrics[i] + "<br>";
                         }
-                    }
-                    else if (this.readyState == 4 && this.status == 404) {
-                        Swal.fire ({
-                            title: 'Oops..',
-                            text: 'No lyrics found! We are sorry for the inconvenience.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
+                        console.log(lyricsText);
+                        document.getElementById("lyrics-text").innerHTML = lyricsText;
+                        document.getElementById("album-cover").innerHTML = "";
+                        document.getElementById("album-name").innerHTML = album;
+                    } catch (e) {
+                        Swal.fire({
+                            title: 'Oops...',
+                            text: 'No lyrics found!',
+                            icon: 'error'
                         });
+                        console.log(e);
                     }
                 }
-                window.scrollTo(0, 0);
-            }
-            function makeSuggestionCard(song, album, artist, albumCover, isExplicit) 
-            {
-                var suggestionsArea = document.getElementById("suggestions");
-                var mainDiv = document.createElement("div");
-                mainDiv.className = "card m-3 m-md-1"
-                mainDiv.style = "max-width: 540px;";
-                var rowDiv = document.createElement("div");
-                rowDiv.className = "row no-gutters align-items-center";
-                var colDiv = document.createElement("div");
-                colDiv.className = "col-md-4";
-                var img = document.createElement("img");
-                img.className = "card-img";
-                img.src = albumCover;
-                img.alt = album;
-                colDiv.appendChild(img);
-                rowDiv.appendChild(colDiv);
-                var colDiv2 = document.createElement("div");
-                colDiv2.className = "col-md-8";
-                var cardDiv = document.createElement("div");
-                cardDiv.className = "card-body";
-                var h5 = document.createElement("h5");
-                h5.className = "card-title";
-                h5.innerHTML = song;
-                var div = document.createElement("div");
-                div.className = "row";
-                var p = document.createElement("p");
-                p.className = "card-text";
-                p.innerHTML = "<strong>Artist:</strong> " + artist;
-                var col6 = document.createElement("div");
-                col6.className = "col-md-6";
-                col6.appendChild(p);
-                div.appendChild(col6);
-                var p2 = document.createElement("p");
-                p2.className = "card-text";
-                p2.innerHTML = "<strong>Album:</strong> " + album;
-                var col6 = document.createElement("div");
-                col6.className = "col-md-6";
-                col6.appendChild(p2);
-                div.appendChild(col6);
-                var e = document.createElement("div");
-                e.className = "alert alert-dark py-1 my-1 text-center";
-                e.innerHTML = "<strong>Explicit:</strong> " + isExplicit.toString().toUpperCase();
-                var button = document.createElement("button");
-                button.className = "mainButton outline my-1 btn-block";
-                button.innerHTML = "<i class='fas fa-music'></i> Get Lyrics";
-                button.onclick = function() {
-                    getLyrics(artist, song, album, albumCover);
-                }
-                col6 = document.createElement("div");
-                col6.className = "col-md-6";
-                col6.appendChild(button);
-                div.appendChild(col6);
-                col6 = document.createElement("div");
-                col6.className = "col-md-6";
-                col6.appendChild(e);
-                div.appendChild(col6);
-                cardDiv.appendChild(h5);
-                cardDiv.appendChild(p);
-                cardDiv.appendChild(p2);
-                cardDiv.appendChild(div);
-                colDiv2.appendChild(cardDiv);
-                rowDiv.appendChild(colDiv2);
-                mainDiv.appendChild(rowDiv);
-                suggestionsArea.appendChild(mainDiv);
-            }
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 80) {
-                    document.getElementById("goToTop").style.display = "block";
-                }
-                else {
-                    document.getElementById("goToTop").style.display = "none";
-                }
-            });
-            function checkCookies() {
-                var cookie = document.cookie;
-                if (cookie.length > 0) {
-                    Swal.fire ({
-                        title: 'Welcome back!',
-                        text: 'Here are the results as per your last serarch.',
-                        icon: 'success',
+                else if (this.readyState == 4 && this.status == 404) {
+                    Swal.fire({
+                        title: 'Oops..',
+                        text: 'No lyrics found! We are sorry for the inconvenience.',
+                        icon: 'error',
                         confirmButtonText: 'OK'
                     });
-                    cookies = cookie.split(";");
-                    document.getElementById("song").value = cookies[0].split("=")[1];
-                    getSuggested();
                 }
             }
-            function setCookies(song) {
-                var date = new Date();
-                date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
-                var expires = "expires=" + date.toUTCString();
-                document.cookie = "song=" + song + ";" + expires + ";path=/";
+            window.scrollTo(0, 0);
+        }
+        function makeSuggestionCard(song, album, artist, albumCover, isExplicit) {
+            var suggestionsArea = document.getElementById("suggestions");
+            var mainDiv = document.createElement("div");
+            mainDiv.className = "card m-3 m-md-1"
+            mainDiv.style = "max-width: 540px;";
+            var rowDiv = document.createElement("div");
+            rowDiv.className = "row no-gutters align-items-center";
+            var colDiv = document.createElement("div");
+            colDiv.className = "col-md-4";
+            var img = document.createElement("img");
+            img.className = "card-img";
+            img.src = albumCover;
+            img.alt = album;
+            colDiv.appendChild(img);
+            rowDiv.appendChild(colDiv);
+            var colDiv2 = document.createElement("div");
+            colDiv2.className = "col-md-8";
+            var cardDiv = document.createElement("div");
+            cardDiv.className = "card-body";
+            var h5 = document.createElement("h5");
+            h5.className = "card-title";
+            h5.innerHTML = song;
+            var div = document.createElement("div");
+            div.className = "row";
+            var p = document.createElement("p");
+            p.className = "card-text";
+            p.innerHTML = "<strong>Artist:</strong> " + artist;
+            var col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            col6.appendChild(p);
+            div.appendChild(col6);
+            var p2 = document.createElement("p");
+            p2.className = "card-text";
+            p2.innerHTML = "<strong>Album:</strong> " + album;
+            var col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            col6.appendChild(p2);
+            div.appendChild(col6);
+            var e = document.createElement("div");
+            e.className = "alert alert-dark py-1 my-1 text-center";
+            e.innerHTML = "<strong>Explicit:</strong> " + isExplicit.toString().toUpperCase();
+            var button = document.createElement("button");
+            button.className = "mainButton outline my-1 btn-block";
+            button.innerHTML = "<i class='fas fa-music'></i> Get Lyrics";
+            button.onclick = function () {
+                getLyrics(artist, song, album, albumCover);
             }
-            function printMe() {
-                window.print();
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            col6.appendChild(button);
+            div.appendChild(col6);
+            col6 = document.createElement("div");
+            col6.className = "col-md-6";
+            col6.appendChild(e);
+            div.appendChild(col6);
+            cardDiv.appendChild(h5);
+            cardDiv.appendChild(p);
+            cardDiv.appendChild(p2);
+            cardDiv.appendChild(div);
+            colDiv2.appendChild(cardDiv);
+            rowDiv.appendChild(colDiv2);
+            mainDiv.appendChild(rowDiv);
+            suggestionsArea.appendChild(mainDiv);
+        }
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 80) {
+                document.getElementById("goToTop").style.display = "block";
             }
-        </script>
-    </body>
+            else {
+                document.getElementById("goToTop").style.display = "none";
+            }
+        });
+        function checkCookies() {
+            var cookie = document.cookie;
+            if (cookie.length > 0) {
+                Swal.fire({
+                    title: 'Welcome back!',
+                    text: 'Here are the results as per your last serarch.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+                cookies = cookie.split(";");
+                document.getElementById("song").value = cookies[0].split("=")[1];
+                getSuggested();
+            }
+        }
+        function setCookies(song) {
+            var date = new Date();
+            date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+            var expires = "expires=" + date.toUTCString();
+            document.cookie = "song=" + song + ";" + expires + ";path=/";
+        }
+        function printMe() {
+            window.print();
+        }
+    </script>
+</body>
+
 </html>
